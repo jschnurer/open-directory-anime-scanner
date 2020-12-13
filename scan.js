@@ -77,6 +77,11 @@ async function handleApiResult(apiResult, queryName, odFolderUrl) {
 	if (!apiResult.results
 		|| !apiResult.results.length) {
 		console.log(`No results for ${queryName}`);
+		results.push({
+			title: queryName,
+			odFolderUrl,
+			matches: [],
+		});
 		return;
 	}
 
