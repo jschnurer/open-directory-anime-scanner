@@ -29,10 +29,16 @@ function cleanFolderName(folderName) {
 
 async function scanOD(odUrl) {
 	try {
-		const resp = await fetch(odUrl, {
-			method: 'GET',
-			agent: httpsAgent,
-		});
+		let resp;
+
+		if (odUrl.startsWith("https:")) {
+			resp = await fetch(odUrl, {
+				method: 'GET',
+				agent: httpsAgent,
+			});
+		} else {
+			resp = await fetch(odUrl);
+		}
 		const txt = await resp.text();
 
 		var re = /<a href="(.+?)">(.+?)<\/a>/g;
