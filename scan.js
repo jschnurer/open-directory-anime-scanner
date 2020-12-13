@@ -6,6 +6,11 @@ if (process.argv.length < 3) {
 const apiUrlTemplate = `https://api.jikan.moe/v3/search/anime?q=_NAME_&limit=6`;
 const fetch = require("node-fetch");
 const fs = require("fs");
+const https = require('https');
+
+const httpsAgent = new https.Agent({
+	rejectUnauthorized: false,
+});
 
 const results = [];
 
@@ -24,7 +29,10 @@ function cleanFolderName(folderName) {
 
 async function scanOD(odUrl) {
 	try {
-		const resp = await fetch(odUrl);
+		const resp = await fetch(odUrl, {
+			method: 'GET',
+			agent: httpsAgent,
+		});
 		const txt = await resp.text();
 
 		var re = /<a href="(.+?)">(.+?)<\/a>/g;
@@ -35,7 +43,8 @@ async function scanOD(odUrl) {
 		do {
 			m = re.exec(txt);
 			if (m) {
-				if (!m[1].startsWith("?")) {
+				if (!m[1].startsWith("?")
+					&& !m[1].startsWith("..")) {
 					let url = m[1];
 					let name = m[2];
 
